@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Satback | Paid feedback</title>
+    <title>Betya | Friendly Bets, Instant Payments</title>
     <link rel="icon" type="image/png" href="web_hi_res_512.png">
       
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@kriptode" />
     <meta name="twitter:creator" content="@citlayik">
-    <meta name="twitter:title" content="Satback" />
-    <meta name="twitter:description" content="Customer satisfaction surveys that pay Bitcoin." />
-    <meta name="twitter:image" content="https://satback.tk/web_hi_res_512.png" /> 
+    <meta name="twitter:title" content="Betya" />
+    <meta name="twitter:description" content="Betya | Friendly Bets, Instant Payments" />
+    <meta name="twitter:image" content="https://betya.tk/web_hi_res_512.png" /> 
     <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous"> -->
 
 
@@ -43,9 +43,12 @@
       
 <!--      <link rel="stylesheet" href="css/bootstrap.min.css">-->
       <link rel="stylesheet" href="css/mdb4.7.3.min.css">
+
+      <link rel="stylesheet" href="css/bootstrap-material-datetimepicker.css">
       
      <link href="example.css" rel="stylesheet"> 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600|Ubuntu+Condensed" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <link href="css/flag-icon.min.css" rel="stylesheet">
 </head>
@@ -56,7 +59,7 @@
 
     <!-- Navbar brand -->
     <a class="navbar-brand" href="/" style="padding-top: 0; padding-bottom: 0;">
-      <img src="web_hi_res_512.png" height="50" alt="" style="margin-right: 10px; height: 50px;">Satback</a>
+      <img src="web_hi_res_512.png" height="50" alt="" style="margin-right: 10px; height: 50px;">Betya</a>
 
     <!-- Collapse button -->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav"
@@ -137,7 +140,7 @@
                 </a>
 -->
                 
-                <h4 class="cardhead warning-color" style=""><a id="surveyheader" style="color: ghostwhite;">Survey</a></h4>
+                <h4 class="cardhead betyacolor" style=""><a id="surveyheader" style="color: ghostwhite;">Create Bet</a></h4>
             </div>
         
                 
@@ -149,78 +152,163 @@
                 
                 <!-- Material input -->
                 <div class="md-form">
-                  <input type="text" id="form1" class="form-control">
-                  <label for="form1">1. Question</label>
+                  <input type="text" id="form1" class="form-control" placeholder="I bet Bitcoin price will be above $10000">
+                  <label for="form1">Bet Condition</label>
                 </div>
                 
-                <div class="md-form input-group mb-0">
+                <div class="md-form input-group mb-0 betopts" id="option1_1group" style="display: none;">
                   <div class="input-group-prepend">
                     <div class="input-group-text md-addon">
                       <input class="form-check-input" type="radio" id="exampleRadios1_1" value="option1_1" disabled name="1">
                         <label class="form-check-label" for="exampleRadios1_1"></label>
                     </div>
                   </div>
-                  <input type="text" class="form-control" aria-label="Text input with radio button" id="option1_1text" placeholder="Option 1">
-<!--                    <label for="option2text">Option 1</label>-->
+                  <input type="text" class="form-control" aria-label="Text input with radio button" id="option1_1text" placeholder="Option 1" value="Bet For">
                 </div>
                 
-                <div class="md-form input-group mb-0" id="option1_2group">
+                <div class="md-form input-group mb-0 betopts" id="option1_2group" style="display: none;">
                   <div class="input-group-prepend">
                     <div class="input-group-text md-addon">
                       <input class="form-check-input" type="radio" id="exampleRadios1_2" value="option1_2" disabled name="1">
                         <label class="form-check-label" for="exampleRadios1_2"></label>
                     </div>
                   </div>
-                  <input type="text" class="form-control" aria-label="Text input with radio button" id="option1_2text" placeholder="Option 2">
-<!--                    <label for="option3text">Option 2</label>-->
+                  <input type="text" class="form-control" aria-label="Text input with radio button" id="option1_2text" placeholder="Option 2" value="Bet Against">
                 </div>
                 
-      <a class="btn-floating btn-sm cyan addoptionbutton" style="margin: auto; display: block;margin-top: 10px;" id="" data-toggle="tooltip" data-placement="top" title="Add Option"><i class="fas fa-plus"></i></a>
+      <!-- <a class="btn-floating btn-sm cyan addoptionbutton" style="margin: auto; display: block;margin-top: 10px;" id="" data-toggle="tooltip" data-placement="top" title="Add Option"><i class="fas fa-plus"></i></a> -->
                 
 
 
-<a class="btn-floating btn-lg cyan" style="margin: auto; display: block;margin-top: 10px;" id="addquestionbutton" data-toggle="tooltip" data-placement="top" title="Add Question"><i class="fas fa-plus"></i></a>
+<!-- <span data-toggle="tooltip" data-placement="right" title="Add Question">
+<a class="btn-floating btn-lg cyan" style="margin: auto; display: block;margin-top: 10px;" id="addquestionbutton" data-toggle="collapse" aria-expanded="false" aria-controls="collapseExample" href="#collapseExample"><i class="fas fa-plus"></i></a>
+</span> -->
+
+<!-- Collapsible element -->
+<div class="collapse" id="collapseExample">
+  <div class="mt-3">
+    <a class="btn-floating btn-lg cyan" style="margin: auto; display: block;margin-top: 10px;" id="addsinglequestionbutton" data-toggle="tooltip" data-placement="right" title="Single Choice Question"><i class="fas fa-poll"></i></a>
+    <a class="btn-floating btn-lg cyan" style="margin: auto; display: block;margin-top: 10px;" id="addratingquestionbutton" data-toggle="tooltip" data-placement="right" title="Rating Question"><i class="fas fa-star-half-alt"></i></a>
+  </div>
+</div>
+<!-- / Collapsible element -->
+
+                <!-- <div class="form-control-wrapper">
+                  <input type="text" id="date-format" class="form-control floating-label" placeholder="Begin Date Time">
+                </div>
 
 
-                <button type="button" class="btn btn-rounded warning-color btn-lg" style="margin: auto; display: block;margin-top: 20px;" id="savepollbutton">Save
-                    <i class="fas fa-check ml-2" id="savecheck" aria-hidden="true"></i>
-                    <i class="fas fa-spinner fa-pulse ml-2" id="savespin" style="display: none;"></i>
-                </button>
-                
-                <button type="button" class="btn btn-rounded warning-color btn-lg" style="margin: auto; display: none;margin-top: 20px;" id="votebutton">Submit
-                    <i class="fas fa-check ml-2" id="votesavecheck" aria-hidden="true"></i>
-                    <i class="fas fa-spinner fa-pulse ml-2" id="votesavespin" style="display: none;"></i>
-                </button>
-                
-                <div class="md-form input-group mb-3">
+
+
+                <div class="md-form">
+                  <input placeholder="Selected time" type="text" id="input_starttime" class="form-control timepicker">
+                  <label for="input_starttime">Light version, 12hours</label>
+                </div> -->
+
+                <div class="md-form">
+                  <input type="text" id="date-format" class="form-control floating-label" placeholder="03/01/2009 10:15">
+                  <label for="date-format">Bet Resolve Time</label>
+                </div>
+                <!-- <div id="betdatetime" style="display: none"></div> -->
+
+                <!-- <div class="md-form">
+                  <input type="text" id="time" class="form-control floating-label" placeholder="Time">
+                </div>
+ -->
+
+
+                <!-- <div class="custom-control custom-checkbox mt-1 mb-1" id="betyadecideholder" style="">
+                    <input type="checkbox" class="custom-control-input" id="betyadecide">
+                    <label class="custom-control-label" for="betyadecide">Betya.tk decides the outcome</label>
+                    <i class="fas fa-question-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="When enabled Betya will decide the outcome of the bet and autopay the winner(s)"></i>
+                </div>
+
+                <div class="md-form" style="display: none;" id="initpayreq">
+                  <input type="text" id="contactinfo" class="form-control" placeholder="hello@pseudozach.com">
+                  <label for="contactinfo">Where to contact you to resolve bet (email address/twitter)</label>
+                </div>
+
+                <div class="custom-control custom-checkbox mt-1 mb-1" id="peopledecideholder" style="">
+                    <input type="checkbox" class="custom-control-input" id="peopledecide">
+                    <label class="custom-control-label" for="peopledecide">Betya.tk decides the outcome</label>
+                    <i class="fas fa-question-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="When enabled betting parties will be contacted to report the outcome of the bet"></i>
+                </div> -->
+
+                <div class="md-form" id="betpriceholder" style="display: none;">
+                  <input type="text" id="betprice" class="form-control" placeholder="">
+                  <label for="betamount">Bet Price</label>
+                </div>
+                <div class="md-form" id="bettotalholder" style="display: none;">
+                  <input type="text" id="bettotal" class="form-control" placeholder="">
+                  <label for="bettotal">Bet Total</label>
+                </div>
+
+                <!-- display: none; -->
+                <div class="md-form" style="" id="contactinfoholder">
+                  <input type="text" id="contactinfo" class="form-control" placeholder="hello@pseudozach.com">
+                  <label for="contactinfo">Where to contact you to resolve bet (email address/twitter)</label>
+                </div>
+
+
+                <div class="md-form input-group mb-3" style="margin-top:20px;" id="fundingcontainer">
                     <div class="input-group-prepend">
-                    <span class="input-group-text md-addon" id="inputGroupMaterial-sizing-default" style="padding:0;">Responders will be paid </span>
-                        
-                        <!-- <span class="input-group-text md-addon" id="votetypespan" style="padding-left:0;"> costs</span>
-                        <button class="btn btn-outline-danger btn-md m-0 px-3 py-2 z-depth-0 dropdown-toggle" type="button"
-                          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="votetypedropdown" disabled style="display: none;">costs
-                        </button>
-                        <div class="dropdown-menu">
-                          <a class="dropdown-item vtdrop">COSTS</a>
-                          <a class="dropdown-item vtdrop">PAYS</a>
-                        </div> -->
-                        
+                    <span class="input-group-text md-addon" id="inputGroupMaterial-sizing-default" style="padding: 0;">Bet Amount: </span>
                   </div>
-<!--                    data-toggle="tooltip" data-placement="top" title="Voter pays"-->
-                    <input type="text" class="form-control" aria-label="Text input" id="price" placeholder="Price/Payment to Answer" value=100>
-<!--                  <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroupMaterial-sizing-default">-->
+
+                  <!-- data-toggle="tooltip" data-placement="top" title="Funding budget for Responder Payments" -->
+                    <input type="text" class="form-control" aria-label="Text input" id="fundingtext" placeholder="You bet this much" value=0>
                     <div class="input-group-append">
                     <span class="input-group-text md-addon" id="inputGroupMaterial-sizing-default">Satoshis</span>
                   </div>
                 </div>
+
+
+                <button type="button" class="btn btn-rounded betyacolor btn-lg" style="margin: auto; display: block;margin-top: 20px;" id="savepollbutton">Save
+                    <i class="fas fa-check ml-2" id="savecheck" aria-hidden="true"></i>
+                    <i class="fas fa-spinner fa-pulse ml-2" id="savespin" style="display: none;"></i>
+                </button>
                 
+                <button type="button" class="btn btn-rounded betyacolor btn-lg" style="margin: auto; display: none;margin-top: 20px;" id="votebutton">Submit
+                    <i class="fas fa-check ml-2" id="votesavecheck" aria-hidden="true"></i>
+                    <i class="fas fa-spinner fa-pulse ml-2" id="votesavespin" style="display: none;"></i>
+                </button>
                 
+                <!-- <div class="md-form input-group mb-3">
+                    <div class="input-group-prepend">
+                    <span class="input-group-text md-addon" id="inputGroupMaterial-sizing-default" style="padding:0;">Responders will be paid </span>
+                        
+                  </div>
+                    <input type="text" class="form-control" aria-label="Text input" id="price" placeholder="Price/Payment to Answer" value=100>
+
+                    <div class="input-group-append">
+                    <span class="input-group-text md-addon" id="inputGroupMaterial-sizing-default">Satoshis</span>
+                  </div>
+                </div>
+                -->
+                
+                <!-- <div class="md-form" style="" id="contactinfoholder">
+                  
+                </div> -->
+              <div>
+                <h3 style="text-align: center;">Bet Resolution</h3>
+                <p>You voted as above, did you win the bet?</p>
+                <div class="custom-control custom-checkbox mt-1 mb-1" id="betyaiwonholder" style="">
+                    <input type="checkbox" class="custom-control-input" id="betyaiwon">
+                    <label class="custom-control-label" for="betyaiwon">I won the bet</label>
+                    <i class="fas fa-question-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="If the other party agrees your invoice will be paid"></i>
+                </div>
+
                 <div class="md-form input-group mb-3" style="margin-top:20px; display: none;" id="voterpayreqcontainer">
                     <div class="input-group-prepend">
-                    <span class="input-group-text md-addon" id="inputGroupMaterial-sizing-default">Invoice: </span>
+                    <span class="input-group-text md-addon" id="inputGroupMaterial-sizing-default" style="padding: 0;">Invoice: </span>
                   </div>
                     <input type="text" class="form-control" aria-label="Text input" id="voterpayreqtext" placeholder="lnbc...." data-toggle="tooltip" data-placement="top" title="Paste your Lightning Network Invoice to get Paid">
-                </div>
+                </div> 
+                <button type="button" class="btn btn-rounded betyacolor btn-lg" style="margin: auto; display: block;margin-top: 20px;" id="resolvebutton">Resolve
+                    <i class="fas fa-check ml-2" id="resolvebetcheck" aria-hidden="true"></i>
+                    <i class="fas fa-spinner fa-pulse ml-2" id="resolvebetspin" style="display: none;"></i>
+                </button>
+              </div>
                 
                 
                 
@@ -241,16 +329,7 @@
                 
                 
                 
-                <div class="md-form input-group mb-3" style="margin-top:20px;" id="fundingcontainer">
-                    <div class="input-group-prepend">
-                    <span class="input-group-text md-addon" id="inputGroupMaterial-sizing-default">Funding: </span>
-                  </div>
-                    <input type="text" class="form-control" aria-label="Text input" id="fundingtext" placeholder="Fund the Survey" data-toggle="tooltip" data-placement="top" title="Funding budget for Responder Payments" value=0>
-<!--                  <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroupMaterial-sizing-default">-->
-                    <div class="input-group-append">
-                    <span class="input-group-text md-addon" id="inputGroupMaterial-sizing-default">Satoshis</span>
-                  </div>
-                </div>
+
                 
                 
                 <div class="input-group mb-3" style="margin-top:20px; display: none;" id="sharecontainer">
@@ -258,7 +337,7 @@
                     aria-describedby="button-addon2" id="polllinktext" readonly onclick="this.select();">
                   <div class="input-group-append">
 <!--                      id="copybutton"-->
-                    <button class="btn btncopy btn-md btn-outline-warning m-0 px-3 py-2 z-depth-0 waves-effect" type="button" data-clipboard-target="#polllinktext" id="polllinkcopybutton"><i class="fas fa-copy ml-2" aria-hidden="true"></i> Copy Survey Link</button>
+                    <button class="btn btncopy btn-md btn-outline-info m-0 px-3 py-2 z-depth-0 waves-effect" type="button" data-clipboard-target="#polllinktext" id="polllinkcopybutton"><i class="fas fa-copy ml-2" aria-hidden="true"></i> Copy Bet Link</button>
 <!--                      <button class="btn btn-md btn-outline-default m-0 px-3 py-2 z-depth-0 waves-effect" type="button" id="sharebutton"><i class="fas fa-share ml-2"  aria-hidden="true"></i> Share</button>-->
                   </div>
                 </div>
@@ -269,39 +348,24 @@
                     aria-describedby="button-addon2" id="resultlinktext" readonly onclick="this.select();">
                   <div class="input-group-append">
 <!--                      id="copybutton"-->
-                    <button class="btn btncopy btn-md btn-outline-warning m-0 px-3 py-2 z-depth-0 waves-effect" type="button" data-clipboard-target="#resultlinktext" id="resultlinkcopybutton"><i class="fas fa-poll ml-2" aria-hidden="true"></i>  Result Link</button>
+                    <button class="btn btncopy btn-md btn-outline-info m-0 px-3 py-2 z-depth-0 waves-effect" type="button" data-clipboard-target="#resultlinktext" id="resultlinkcopybutton"><i class="fas fa-poll ml-2" aria-hidden="true"></i>  Bet Status Link</button>
 <!--                      <button class="btn btn-md btn-outline-default m-0 px-3 py-2 z-depth-0 waves-effect" type="button" id="sharebutton"><i class="fas fa-share ml-2"  aria-hidden="true"></i> Share</button>-->
                   </div>
                 </div>
                 
                 
-                <div class="input-group mb-3 budgetcl" style="margin-top:20px; display: none;">
-<!--                    <div class="input-group-prepend">-->
+                <!-- <div class="input-group mb-3 budgetcl" style="margin-top:20px; display: none;">
                         <span class="input-group-text md-addon flexit" id="inputGroupMaterial-sizing-default">Remaining Budget:</span>
                         <span class="input-group-text md-addon flexit" id="budgettext" data-toggle="tooltip" data-placement="top" title="Amount remaining to pay to voters"></span>
-<!--                  </div>-->
-<!--
-                  <input type="text" class="form-control" placeholder="Budget Amount" aria-label="Budget Amount"
-                    aria-describedby="button-addon2" id="budgetrefilltext" onclick="this.select();">
-                  <div class="input-group-append">
-                    <button class="btn btncopy btn-md btn-outline-danger m-0 px-3 py-2 z-depth-0 waves-effect" type="button" id="withdrawlinkcopybutton" data-toggle="tooltip" data-placement="top" title="Refill poll budget"><i class="fas fa-user-upload ml-2" aria-hidden="true"></i>Budget Refill</button>
-                  </div>
--->
-                </div>
+                </div> -->
                 
-                <div class="input-group mb-3 budgetcl" style="margin-top:20px; display: none;">
-<!--
-                    <div class="input-group-prepend">
-                        <span class="input-group-text md-addon" id="inputGroupMaterial-sizing-default">Remaining Budget:</span>
-                        <span class="input-group-text md-addon" id="budgettext"></span>
-                  </div>
--->
+               <!--  <div class="input-group mb-3 budgetcl" style="margin-top:20px; display: none;">
                   <input type="text" class="form-control" placeholder="Budget Refill Amount" aria-label="Budget Amount"
                     aria-describedby="button-addon2" id="budgetrefilltext" onclick="this.select();">
                   <div class="input-group-append">
-                    <button class="btn btncopy btn-md btn-outline-warning m-0 px-3 py-2 z-depth-0 waves-effect" type="button" id="budgetrefillbutton" data-toggle="tooltip" data-placement="top" title="Refill poll budget"><i class="fas fa-upload ml-2" aria-hidden="true"></i> Budget Refill</button>
+                    <button class="btn btncopy btn-md btn-outline-info m-0 px-3 py-2 z-depth-0 waves-effect" type="button" id="budgetrefillbutton" data-toggle="tooltip" data-placement="top" title="Refill poll budget"><i class="fas fa-upload ml-2" aria-hidden="true"></i> Budget Refill</button>
                   </div>
-                </div>
+                </div> -->
                 
 <!--
                 <div style="text-align: center;">
@@ -374,10 +438,10 @@
                 </a>
 -->
                 
-                <h4 class="cardhead warning-color" style="text-align: center;">
+                <h4 class="cardhead betyacolor" style="text-align: center;">
                   <!-- <a href="https://kriptode.com/lightpoll/index.html" target="_blank" style="color: ghostwhite;">LightPoll</a> -->
                   <!-- A new way to gather feedback -->
-                  Pay your customers to tell the truth.
+                  Bet on Anything Among Friends.
                 </h4>
             </div>
         
@@ -387,7 +451,7 @@
 
               <!-- <h4></h4>
               </br> -->
-              <h5>Instant Surveys. Powered by Bitcoin and Lightning.</h5>
+              <h5>Set criteria, Share bet link, Resolve and Get paid instantly. Powered by Bitcoin and Lightning.</h5>
              <!--  <h4>1. Create a Survey, Fund with Bitcoin</h4>
                 <h4>2. Responding Customers are Paid Instantly with Lightning ⚡</h4>
                 <h4>3. Collect Valuable Information, Improve your Operations</h4> -->
@@ -454,10 +518,10 @@
                 <div style="display: flex;">
                   <input id="lninvoiceholder" style="word-wrap: break-word;overflow: hidden;white-space: nowrap;flex: 1 1 auto;" class="selectable" onclick="this.select();" readonly/>
 <!--                  </input>-->
-                    <a href="javascript:;" class="btn btn-outline-danger m-0 px-3 py-2 z-depth-0" id="openwithwallet" style="display: block;">
+                    <a href="javascript:;" class="btn btn-outline-info m-0 px-3 py-2 z-depth-0" id="openwithwallet" style="display: block;">
 <!--                         Pay with Wallet-->
                         <i class="fas fa-bolt"></i></a>
-                    <button class="btn btncopy btn-md btn-outline-danger m-0 px-3 py-2 z-depth-0 waves-effect" type="button" data-clipboard-target="#lninvoiceholder" style="display: inline; float: right;" id="copyinvoicebutton"><i class="fas fa-copy ml-2" aria-hidden="true"></i> Copy</button>
+                    <button class="btn btncopy btn-md btn-outline-info m-0 px-3 py-2 z-depth-0 waves-effect" type="button" data-clipboard-target="#lninvoiceholder" style="display: inline; float: right;" id="copyinvoicebutton"><i class="fas fa-copy ml-2" aria-hidden="true"></i> Copy</button>
                 </div>
               <br/>
                 <!-- <a style="text-align: center;margin: 10px;display: block;" href="http://bit.ly/2VaDQMC" target="_blank">👋 Don't have a wallet? Click here to install bitlum.io browser wallet and get $0.10 free bonus 🎉</a> -->
@@ -628,11 +692,22 @@
 <!-- Bootstrap tooltips -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
 <!-- Bootstrap core JavaScript -->
+
+<!-- <script type="text/javascript" src="/path/to/jquery.js"></script> -->
+<script type="text/javascript" src="js/moment.min.js"></script>
+<!-- <script type="text/javascript" src="/path/to/bootstrap/js/transition.js"></script> -->
+<!-- <script type="text/javascript" src="/path/to/bootstrap/js/collapse.js"></script> -->
+<!-- <script type="text/javascript" src="/path/to/bootstrap/dist/bootstrap.min.js"></script> -->
+<!-- <script type="text/javascript" src="/path/to/bootstrap-datetimepicker.min.js"></script> -->
+
+
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.min.js"></script>
 <!-- MDB core JavaScript -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.1/js/mdb.min.js"></script>
       
-      
+
+<script type="text/javascript" src="js/bootstrap-material-datetimepicker.js"></script>
+
     <!-- JQuery -->
 <!--    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
     <!-- Bootstrap tooltips -->
@@ -652,12 +727,7 @@
     <script>
       // Initialize Firebase
       var config = {
-        apiKey: "AIzaSyD1aDBhRrp90y_P2NFOfDlKTBSsqRtYKU8",
-        authDomain: "yunik2-1014b.firebaseapp.com",
-        databaseURL: "https://yunik2-1014b.firebaseio.com",
-        projectId: "yunik2-1014b",
-        storageBucket: "yunik2-1014b.appspot.com",
-        messagingSenderId: "1091513541084"
+       
       };
       firebase.initializeApp(config);
     </script>
@@ -678,6 +748,7 @@
     ></script>
       
       <script src="js/clipboard.min.js"></script>
-     <script src="satback.js"></script> 
+      <!-- <script type="text/javascript" src="js/addons/rating.js"></script> -->
+     <script src="betya.js"></script> 
   </body>
 </html>

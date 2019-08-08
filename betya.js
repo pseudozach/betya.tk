@@ -43,10 +43,13 @@ var glusername;
    $("#formcard").hide();
    $("#profileli").show();
 
-   var addsurveybutton = '<a class="btn-floating btn-lg cyan addsurveybutton" style="margin: auto; display: block;margin-top: 10px;" id="" data-toggle="tooltip" data-placement="top" title="Add Survey"><i class="fas fa-plus"></i></a>';
+   var addsurveybutton = '<a class="btn-floating btn-lg betyacolor addsurveybutton" style="margin: auto; display: block;margin-top: 10px;" id="" data-toggle="tooltip" data-placement="top" title="New Bet"><i class="fas fa-plus"></i></a>';
    $("#surveyscard").append(addsurveybutton);
 
    
+   $('[data-toggle="tooltip"]').tooltip();
+
+
    populateMySurveys(glusername);
 
    // document.getElementById('section-2').style.display = 'block'
@@ -61,6 +64,65 @@ var glusername;
      showProfile(userData.profile, userData.username)
    })
  }
+
+
+
+function ratingsetup(){
+      var $stars;
+
+    jQuery(document).ready(function ($) {
+
+      // Custom whitelist to allow for using HTML tags in popover content
+      var myDefaultWhiteList = $.fn.tooltip.Constructor.Default.whiteList
+      // myDefaultWhiteList.textarea = [];
+      // myDefaultWhiteList.button = [];
+
+      $stars = $('.rate-popover');
+
+      $stars.on('mouseover', function () {
+        var index = $(this).attr('data-index');
+        markStarsAsActive(index);
+      });
+
+      function markStarsAsActive(index) {
+        unmarkActive();
+        for (var i = 0; i <= index; i++) {
+          $($stars.get(i)).addClass('amber-text');
+        }
+      }
+
+      function unmarkActive() {
+        $stars.removeClass('amber-text');
+      }
+
+      $stars.on('click', function () {
+        $stars.popover('hide');
+      });
+
+      // Submit, you can add some extra custom code here
+      // ex. to send the information to the server
+      $('#rateMe').on('click', '#voteSubmitButton', function () {
+        $stars.popover('hide');
+      });
+
+      // Cancel, just close the popover
+      $('#rateMe').on('click', '#closePopoverButton', function () {
+        $stars.popover('hide');
+      });
+
+    });
+
+    $(function () {
+      // $('.rate-popover').popover({
+      //   // Append popover to #rateMe to allow handling form inside the popover
+      //   container: '#rateMe',
+      //   // Custom content for popover
+      //   // content: `<div class="my-0 py-0"> <textarea type="text" style="font-size: 0.78rem" class="md-textarea form-control py-0" placeholder="Write us what can we improve" rows="3"></textarea> <button id="voteSubmitButton" type="submit" class="btn btn-sm btn-primary">Submit!</button> <button id="closePopoverButton" class="btn btn-flat btn-sm">Close</button>  </div>`
+      // });
+      $('.rate-popover').tooltip();
+    });
+
+}
 
 
 // document.addEventListener('DOMContentLoaded', function() {
@@ -151,11 +213,44 @@ $(function(){
         $("#fundingcontainer").hide();
         $("#surveyscard").hide();
         // $("#surveyheader").text("Survey #"+pollId.slice(-4));
-        $("#surveyheader").text("Survey #" + pollId.slice(-4));
+        $("#surveyheader").text("Bet #" + pollId.slice(-4));
         
-        firebase.database().ref("lightpoll/" + pollId).once("value", function(snapshot){
+        firebase.database().ref("betyas/" + pollId).once("value", function(snapshot){
            if(snapshot != null && snapshot.val() != null && snapshot.val().paid){
                var pollobj = snapshot.val();
+               console.log("questionat? ", pollobj["question_at"]);
+               $("#date-format").val(pollobj["question_at"]);
+               $(".betopts").show();
+               $("#date-format").attr("disabled", "disabled");
+               $("#date-format").css("border-bottom", "none");
+
+              //check if bet expired?
+              var resolveDate = new Date(pollobj["betresolvedate"]);
+              var rightnow = new Date();
+              if(rightnow > resolveDate && !window.location.href.includes("resolve=true")){
+                console.log("bet expired");
+                Snackbar.show({text: 'Bet Expired :(' ,pos: "bottom-center", duration:0, showAction: true, actionText:"Go to Home", onActionClick: function(element){window.location.href="./"}});
+                $("#votebutton").attr("disabled", "disabled");
+              } else {
+                console.log("bet active");
+              }
+
+              //betprice & bettotal
+              // console.log("price:: ", pollobj["price"]);
+              $("#betprice").val(pollobj["price"] + " Satoshis");
+              $("#betprice").focusin();
+              $("#betprice").css("border-bottom", "none");
+              $("#betprice").attr("readonly","");
+              $("#betpriceholder").show();
+
+              $("#bettotal").val(parseInt(pollobj["price"] * (pollobj["voteCount"])) + " Satoshis");
+              $("#bettotal").focusin();
+              $("#bettotal").css("border-bottom", "none");
+              $("#bettotal").attr("readonly","");
+              $("#bettotalholder").show();
+
+
+
                for(var j=1;j<pollobj.questioncount+1;j++){
 
                 var questionx = '<div class="md-form" style="margin-top: 2.5rem;">'+
@@ -183,10 +278,37 @@ $(function(){
                   '<input type="text" class="form-control" aria-label="Text input with radio button" id="option'+j+'_2text" placeholder="Option '+j+'_2">'+
                 '</div>'+
                 
-                '<a class="btn-floating btn-sm cyan addoptionbutton" style="margin: auto; display: block;margin-top: 10px;" id="" data-toggle="tooltip" data-placement="top" title="Add Option"><i class="fas fa-plus"></i></a>';
+                  // data-toggle="tooltip" data-placement="top" title="Add Option"
+                '<a class="btn-floating btn-sm cyan addoptionbutton" style="margin: auto; display: block;margin-top: 10px;" id=""><i class="fas fa-plus"></i></a>';
                 
-                if(j!=1)
-                $("#addquestionbutton").before(questionx);
+
+                var ratingquestionx = '<div class="md-form">'+
+                  '<input type="text" id="form'+j+'" class="form-control">'+
+                 '<label for="form'+j+'">'+j+'. Question</label>'+
+                '</div>'+
+
+
+                '<span id="rateMe" style="text-align: center;display: block;font-size: xx-large;">'+
+                  '<i class="fas fa-star py-2 px-1 rate-popover" id="rating'+j+'_1text" data-index="0" data-html="true" data-toggle="popover" data-placement="top" title="Very bad"></i>'+
+                  '<i class="fas fa-star py-2 px-1 rate-popover" id="rating'+j+'_2text" data-index="1" data-html="true" data-toggle="popover" data-placement="top" title="Poor"></i>'+
+                  '<i class="fas fa-star py-2 px-1 rate-popover" id="rating'+j+'_3text" data-index="2" data-html="true" data-toggle="popover" data-placement="top" title="OK"></i>'+
+                  '<i class="fas fa-star py-2 px-1 rate-popover" id="rating'+j+'_4text" data-index="3" data-html="true" data-toggle="popover" data-placement="top" title="Good"></i>'+
+                  '<i class="fas fa-star py-2 px-1 rate-popover" id="rating'+j+'_5text" data-index="4" data-html="true" data-toggle="popover" data-placement="top" title="Excellent"></i>'+
+                '</span>';
+
+                // '<a class="btn-floating btn-sm cyan addoptionbutton" style="margin: auto; display: block;margin-top: 10px;" id="" data-toggle="tooltip" data-placement="top" title="Add Option"><i class="fas fa-plus"></i></a>';
+                
+                if(j!=1){
+                  if(pollobj["option"+j+"_1text"] && pollobj["option"+j+"_1text"].length > 0){
+                    //its a single option question
+                    // console.log("single q: ", pollobj["option"+j+"_1"]);
+                    $("#addquestionbutton").before(questionx);
+                  } else {
+                    $("#addquestionbutton").before(ratingquestionx);
+                  }
+                }
+
+                // $("#addquestionbutton").before(questionx);
 
 
 
@@ -209,11 +331,18 @@ $(function(){
                   }
                   // console.log("tqoc: ", tqoc);
 
+                  if(pollobj["rating"+j+"_3"+"text"]){
+                    tqoc = 5;
+                  }
 
 
 
+
+                  var ratingavg = 0;
+                  var ratingcount = 0;
                 for(var i=1;i<tqoc+1;i++){
 
+                    // 3
                    if(i>=3 && !$("#option"+(i).toString()+"group").length){
                        //just the ones after 2
 //                       console.log("i, adding: ", i);
@@ -238,19 +367,54 @@ $(function(){
 //                                 'text" placeholder="Option '+i+'"></div>';
 // //                       <div class="input-group-append">' +
 // //                           '<span class="input-group-text md-addon">'+pollobj[pollobj["option"+i+"text"]]+'</span></div>
+
+
                         var addafter = "#option"+j+"_"+(i-1).toString()+"group";
                         $(addafter).after(optionx);
+
+                        // console.log("adding: ", j, i);
+                        // $("#form"+j).parent().after(optionx);
+
                    }
+
+
                    $("#option"+j+"_"+i+"text").val(pollobj["option"+j+"_"+i+"text"]);
                    $("#exampleRadios"+j+"_"+i).val(pollobj["option"+j+"_"+i+"text"]);
                    $("#exampleRadios"+j+"_"+i).attr("disabled", false);
                    $("#option"+j+"_"+i+"text").attr("readonly","");
 
+                   $("#date-format").text(pollobj["question_at"]);
+
 
                    if(window.location.href.includes("result=true")){
-                     //add votes of each option next to it
+                      //add votes of each option next to it
                       $("#option"+j+"_"+i+"text").after('<p style="margin: auto;"><i class="fas fa-vote-yea"></i> '+pollobj["option"+j+"_"+i+"vote"]+'</p>');
+                   
+
+                      // console.log("hey j i: ", pollobj["rating"+j+"_"+i+"vote"], j, i);
+                      //calculate rating if the question is of that type
+                      if(pollobj["rating"+j+"_"+i+"vote"] && pollobj["rating"+j+"_"+i+"vote"] > 0){
+                        // ratingavg += pollobj["rating"+j+"_"+i+"vote"];
+                        ratingavg += i * parseInt(pollobj["rating"+j+"_"+i+"vote"])
+                        ratingcount += parseInt(pollobj["rating"+j+"_"+i+"vote"]);
+                        // console.log("j i ratingavg ratingcount", j, i, ratingavg, ratingcount);
+                      }
+
+                      $(".rate-popover").each(function(){
+                        $(this).addClass("nohover");
+                      });
+                        
+
+                        $("#contactinfoholder").hide();
+                      
                    }
+
+
+
+
+
+
+
                    //result & text for each option
 //                   console.log(pollobj, pollobj[pollobj["option"+i+"text"]], pollobj.voteCount, (parseInt(pollobj[pollobj["option"+i+"text"]]) / pollobj.voteCount) );
                    if(pollobj.voteCount > 0){
@@ -270,13 +434,29 @@ $(function(){
                    }
                    
                    if(!$("#voteCount").length && pollobj.created_at != null){
-                       $("#votebutton").after('<div style="margin-top: 10px;display:none;" id="totalvoteholder"><span id="voteCount">Total: ' + pollobj.voteCount +  ' votes</span><span style="float:right;">Created on '+ new Date(pollobj.created_at).toLocaleDateString()+'</span></div>');
+                       $("#votebutton").after('<div style="margin-top: 10px;display:none;" id="totalvoteholder"><span id="voteCount">Total: ' + pollobj.voteCount +  ' bets</span><span style="float:right;">Created on '+ new Date(pollobj.created_at).toLocaleDateString()+'</span></div>');
                    } else {
-                       $("#voteCount").text('Total: ' + pollobj.voteCount +  ' votes');
+                       $("#voteCount").text('Total: ' + pollobj.voteCount +  ' bets');
                    }
                    
                    
                }
+
+               var ratavgint = parseInt(ratingavg/ratingcount);
+               // var wtf = "#rating"+j+"_"+ratavgint.toString()+"text";
+               // console.log("end of tqoc? j ratavgint wtf", ratingavg, ratingavg/ratingcount, j , ratavgint, wtf);
+               
+               for(var z=1;z<=ratavgint;z++){
+                  var wtf = "#rating"+j+"_"+z.toString()+"text";
+                  $(wtf).addClass("amber-text");
+               }
+               
+
+               // setTimeout(function(){
+                
+               // }, 500);
+               
+
 
 
 
@@ -302,6 +482,10 @@ $(function(){
                
                $("#price").val(pollobj.price);
                $("#feesatoshi").text(pollobj.price);
+
+               ratingsetup();
+
+               $(".tooltip").hide();
                
                var votetype = "pays";
                if(pollobj.votetype && pollobj.votetype == "pays"){
@@ -320,11 +504,19 @@ $(function(){
                     
                    // sharelink
                    $("#sharecontainer").show();
-                   $("#polllinktext").val(window.location.href.split("&result")[0]);
+                   var corelink = window.location.href.split("&result")[0];
+                   if(corelink.includes("authResponse")){
+                    corelink = corelink.split("?authResponse=")[0] + "?" + corelink.split("?authResponse=")[1].split("?")[1];
+                   }
+                    // window.location.href.split("&result")[0]
+                   $("#polllinktext").val(corelink);
 
                    //admin need not vote
                    $("#voterpayreqcontainer").hide();
+                   
                    $("#votebutton").attr("disabled","disabled");
+                   $("#votebutton").hide();
+
                    $("#fundingcontainer").hide();
                     
                    if(votetype == "pays"){
@@ -336,10 +528,34 @@ $(function(){
 //                    also check if newly created - &created=true
                     if(window.location.href.includes("&created=true")){
                         $("#resultcontainer").show();
-                        $("#resultlinktext").val(window.location.href.split("&created")[0]);
+
+                        $("#contactinfoholder").hide();
+
+                        var reslink = window.location.href.split("&created")[0];
+                         if(reslink.includes("authResponse")){
+                          reslink = reslink.split("?authResponse=")[0] + "?" + reslink.split("?authResponse=")[1].split("?")[1];
+                         }
+                        $("#resultlinktext").val(reslink);
                     }
                     
                 }
+
+
+
+                 if(window.location.href.includes("resolve=true")){
+                      $("#sharecontainer").hide();
+                      // $("#voterpayreqcontainer").show();
+                      $("#totalvoteholder").hide();
+
+                      if(window.location.href.includes("option1_2vote")){
+                        $("#exampleRadios1_2").click();
+                      } else {
+                        $("#exampleRadios1_1").click();
+                      }
+                      
+                  }
+
+
                
 //               if(window.location.href.includes("withdrawcode=")){
 //                   
@@ -364,9 +580,28 @@ $(function(){
                
                $("#spinner").hide();
            } else {
+              $("#spinner").hide();
                console.log("doesnt exist or not paid");
-               Snackbar.show({text: 'Survey does not exist or not paid.' ,pos: "bottom-center", duration:0, showAction: true, actionText:"Go to Home", onActionClick: function(element){window.location.href="./"}});
+               Snackbar.show({text: 'Bet does not exist or not paid.' ,pos: "bottom-center", duration:0, showAction: true, actionText:"Go to Home", onActionClick: function(element){window.location.href="./"}});
            } 
+        });
+
+        $("#resolvebutton").click(function(){
+
+          var payreq = $("#voterpayreqtext").val();
+          var iwon = $("#betyaiwon").is(":checked");
+
+          var betresponse = iwon;
+          var resolvecode = "";
+          var resolvevote = "option1_1vote";
+
+          var iwon = $("#betyaiwon").is(":checked");
+          if((window.location.href.includes("option1_2vote") && iwon) || (window.location.href.includes("option1_1vote") && !iwon)){
+            resolvevote = "option1_2vote";
+          }
+
+          resolveBet(pollId, betresponse,payreq, resolvecode, resolvevote);
+
         });
         
         $("#votebutton").click(function(){
@@ -385,11 +620,17 @@ $(function(){
                 return false;
             }
 
-            var voterpayreq = $("#voterpayreqtext").val();
-            if(voterpayreq == null || voterpayreq == ""){
-              Snackbar.show({text: 'Invoice is required for now.' ,pos: "bottom-center"});
+            if($("#contactinfo").val() == ""){
+              Snackbar.show({text: 'Please enter Contact Information to resolve the bet.' ,pos: "bottom-center"});
                 return false;
             }
+            var contactinfo = $("#contactinfo").val();
+
+            var voterpayreq = $("#voterpayreqtext").val();
+            // if(voterpayreq == null || voterpayreq == ""){
+            //   Snackbar.show({text: 'Invoice is required for now.' ,pos: "bottom-center"});
+            //     return false;
+            // }
             
             $("#votesavecheck").hide();
             $("#votesavespin").show();
@@ -409,10 +650,39 @@ $(function(){
               //    return false;
               // }
             });
+
+
+            $(".amber-text").each(function(){
+              var tqid = $(this).attr("id").split("rating")[1].split("text")[0].split("_")[0];
+              // var tqoid = $(this).id.split("rating")[1].split("text")[0].split("_")[0];
+              var tqoid = "0";
+              if($("#rating"+tqid+"_5text").hasClass("amber-text")){
+                var tqoid = "5";
+              } else if($("#rating"+tqid+"_4text").hasClass("amber-text")){
+                var tqoid = "4";
+              } else if($("#rating"+tqid+"_3text").hasClass("amber-text")){
+                var tqoid = "3";
+              } else if($("#rating"+tqid+"_2text").hasClass("amber-text")){
+                var tqoid = "2";
+              } else {
+                var tqoid = "1";
+              }
+              // console.log("tqoid: ", tqoid);
+
+              var eltoadd = "rating"+tqid+"_"+tqoid+"vote";
+
+              if(!allvoteoptions.includes(eltoadd))
+                allvoteoptions.push(eltoadd);
+
+            });
+
             console.log("allvoteoptions: ", allvoteoptions);
 
+
+            // return false;
+
             
-               votePoll(pollId, voteoption,allvoteoptions, voterpayreq); 
+               votePoll(pollId, voteoption,allvoteoptions, voterpayreq, contactinfo); 
         });
         
     } else {
@@ -464,7 +734,8 @@ $(function(){
     });
 
 
-    $("#addquestionbutton").click(function(){
+    $("#addsinglequestionbutton").click(function(){
+    // $("#addquestionbutton").click(function(){
 
           var questionx = '<div class="md-form">'+
                   '<input type="text" id="form'+questionno+'" class="form-control">'+
@@ -491,13 +762,70 @@ $(function(){
                   '<input type="text" class="form-control" aria-label="Text input with radio button" id="option'+questionno+'_2text" placeholder="Option 2">'+
                 '</div>'+
                 
-      '<a class="btn-floating btn-sm cyan addoptionbutton" style="margin: auto; display: block;margin-top: 10px;" id="" data-toggle="tooltip" data-placement="top" title="Add Question"><i class="fas fa-plus"></i></a>';
+                // data-toggle="tooltip" data-placement="top" title="Add Question"
+      '<a class="btn-floating btn-sm cyan addoptionbutton" style="margin: auto; display: block;margin-top: 10px;" id="" ><i class="fas fa-plus"></i></a>';
+      
       $("#addquestionbutton").before(questionx);
       questionno++;
 
+      $("#addquestionbutton").click();
+    });
 
+    $("#addratingquestionbutton").click(function(){
+    // $("#addquestionbutton").click(function(){
+
+          var questionx = '<div class="md-form">'+
+                  '<input type="text" id="form'+questionno+'" class="form-control">'+
+                 '<label for="form'+questionno+'">'+questionno+'. Question</label>'+
+                '</div>'+
+
+
+                '<span id="rateMe" style="text-align: center;display: block;font-size: xx-large;">'+
+                  '<i class="fas fa-star py-2 px-1 rate-popover" id="rating'+questionno+'_1text" data-index="0" data-html="true" data-toggle="popover" data-placement="top" title="Very bad"></i>'+
+                  '<i class="fas fa-star py-2 px-1 rate-popover" id="rating'+questionno+'_2text" data-index="1" data-html="true" data-toggle="popover" data-placement="top" title="Poor"></i>'+
+                  '<i class="fas fa-star py-2 px-1 rate-popover" id="rating'+questionno+'_3text" data-index="2" data-html="true" data-toggle="popover" data-placement="top" title="OK"></i>'+
+                  '<i class="fas fa-star py-2 px-1 rate-popover" id="rating'+questionno+'_4text" data-index="3" data-html="true" data-toggle="popover" data-placement="top" title="Good"></i>'+
+                  '<i class="fas fa-star py-2 px-1 rate-popover" id="rating'+questionno+'_5text" data-index="4" data-html="true" data-toggle="popover" data-placement="top" title="Excellent"></i>'+
+                '</span>';
+                
+      //           '<div class="md-form input-group mb-0">'+
+      //             '<div class="input-group-prepend">'+
+      //               '<div class="input-group-text md-addon">'+
+      //                 '<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios'+questionno+'_1" value="option'+questionno+'_1" disabled>'+
+      //                   '<label class="form-check-label" for="exampleRadios'+questionno+'_1"></label>'+
+      //               '</div>'+
+      //             '</div>'+
+      //             '<input type="text" class="form-control" aria-label="Text input with radio button" id="option'+questionno+'_1text" placeholder="Option 1">'+
+      //           '</div>'+
+                
+      //           '<div class="md-form input-group mb-0" id="option'+questionno+'_2group">'+
+      //             '<div class="input-group-prepend">'+
+      //               '<div class="input-group-text md-addon">'+
+      //                 '<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios'+questionno+'_2" value="option'+questionno+'_2" disabled>'+
+      //                   '<label class="form-check-label" for="exampleRadios'+questionno+'_2"></label>'+
+      //               '</div>'+
+      //             '</div>'+
+      //             '<input type="text" class="form-control" aria-label="Text input with radio button" id="option'+questionno+'_2text" placeholder="Option 2">'+
+      //           '</div>'+
+                
+      // '<a class="btn-floating btn-sm cyan addoptionbutton" style="margin: auto; display: block;margin-top: 10px;" id="" data-toggle="tooltip" data-placement="top" title="Add Question"><i class="fas fa-plus"></i></a>';
+      $("#addquestionbutton").before(questionx);
+      questionno++;
+
+      $("#addquestionbutton").click();
+      ratingsetup();
+      // $('[data-toggle="tooltip"]').tooltip();
     });
     
+
+
+
+
+
+
+
+
+
     $(document).on('click', '.addsurveybutton',function(){
       $("#formcard").show();
       $("#surveyscard").hide();
@@ -506,7 +834,8 @@ $(function(){
     $("#savepollbutton").click(function(){
         
         //extra checks
-        if($("#form1").val() == "" || $("#price").val() == "" || $("#fundingtext").val() == ""){
+        // || $("#price").val() == ""
+        if($("#form1").val() == ""  || $("#fundingtext").val() == "" || $("#contactinfo").val() == ""){
             alert("empty fields");
             $("#addoptionbutton").removeClass("disabled");
             $("#savepollbutton").prop("disabled",false);
@@ -515,8 +844,9 @@ $(function(){
             return false;
         }
         
-        if(parseInt($("#fundingtext").val()) < parseInt($("#price").val())){
-          Snackbar.show({text: 'Funding can not be less than survey payment' ,pos: "bottom-center"});
+        // parseInt($("#price").val())
+        if(parseInt($("#fundingtext").val()) <= 0){
+          Snackbar.show({text: 'Funding can not be less than 0' ,pos: "bottom-center"});
           $("#addoptionbutton").removeClass("disabled");
             $("#savepollbutton").prop("disabled",false);
             $("#savecheck").show();
@@ -554,12 +884,43 @@ $(function(){
                 pollobj[inputId] = inputText;
             }
         });
+
+        // '<i class="fas fa-star py-2 px-1 rate-popover" id="rating'+questionno+'_1text" data-index="0"
+        $(".rate-popover").each(function() {
+            var inputId = this.id;
+            // var inputText = $(this).val();
+            var inputText = $(this).attr("data-index");
+            // console.log("id, text: ", inputId, inputText);
+//            console.log(this.id);
+//            console.log($(this).val());
+            // if(inputId.includes("form") && inputText != ""){
+            //     pollobj["question_"+inputId.split("form")[1]] = inputText;
+            //     questioncounter++;
+            // }
+            if(inputId.includes("rating") && inputText != ""){
+                // inputId.split("option")[1].split("text")[0].sp
+                pollobj[inputId] = inputText;
+//                pollobj[inputText.toString()] = 0;
+                pollobj[inputId.replace("text", "vote")] = 0;
+                optioncounter++;
+            }
+
+            // console.log("pollobj: ", pollobj);
+        });
+
+        pollobj["betresolvedate"] = moment($("#date-format").val(),"dddd DD MMMM YYYY - HH:mm").format();
+        pollobj["betdateoriginal"] = $("#date-format").val();
+        pollobj["contactinfo"] = $("#contactinfo").val();
+        var contactinfo = $("#contactinfo").val();
+        // pollobj["betfor"] = {contactinfo: true};
+
         pollobj["optioncount"] = optioncounter;
         pollobj["questioncount"] = questioncounter;
-        pollobj["votetype"] = "pays";
+        pollobj["votetype"] = "costs";
         // $("#votetypedropdown").text().toLowerCase();
         pollobj["funding"] = $("#fundingtext").val();
-       console.log("pollobj: ", pollobj);
+        pollobj["price"] = $("#fundingtext").val();
+        console.log("pollobj: ", pollobj);
         createPoll(pollobj, optioncounter);
 //        Keys must be non-empty strings and can't contain ".", "#", "$", "/", "[", or "]"
         
@@ -675,11 +1036,25 @@ $(function(){
     $("#polllinkcopybutton").click(function(){
         $("#polllinkcopybutton").html('<i class="fas fa-check ml-2" aria-hidden="true"></i> Copied');
         setTimeout(function(){
-            $("#polllinkcopybutton").html('<i class="fas fa-copy ml-2" aria-hidden="true"></i> Copy');
+            $("#polllinkcopybutton").html('<i class="fas fa-copy ml-2" aria-hidden="true"></i> Copy Bet Link');
         }, 1500);
     });
     
     $('[data-toggle="tooltip"]').tooltip();
+
+    $('#date-format').bootstrapMaterialDatePicker({ format : 'dddd DD MMMM YYYY - HH:mm', minDate : new Date() });
+    // $('#time').bootstrapMaterialDatePicker({ date: false });
+
+    // $('#input_starttime').pickatime({});
+
+    $('#betyaiwon').change(
+    function(){
+        if ($(this).is(':checked')) {
+            $("#voterpayreqcontainer").show();
+        } else {
+          $("#voterpayreqcontainer").hide();
+        }
+    });
     
     setupWebLN();
 
@@ -691,7 +1066,7 @@ function populateMySurveys(userId){
     $("#surveyscard").show();
 
 
-    firebase.database().ref("lightpoll").once("value", function(snapshot){
+    firebase.database().ref("betyas").once("value", function(snapshot){
      if(snapshot.exists() && snapshot != null && snapshot.val() != null){
          snapshot.forEach(child => {
             var survey = child.val();
@@ -699,12 +1074,13 @@ function populateMySurveys(userId){
               // console.log("setting surveyscard show");
               
               var surveydate = new Date(survey.created_at).toString().split(" GMT")[0];
+              var betresolvedate = new Date(survey.betresolvedate).toString().split(" GMT")[0];
               // console.log(surveydate.toString().split(" GMT")[0]);
 
               var summarycard = '<div class="card" style="margin-top: 10px;">'+
 
                   '<div class="view overlay">'+
-                  '<h4 class="cardhead warning-color" style="text-align: center;margin-bottom: 0;">Survey #'+ child.key.slice(-4) + 
+                  '<h4 class="cardhead info-color" style="text-align: center;margin-bottom: 0;">Bet #'+ child.key.slice(-4) + 
                   '</h4>'+
                   //   // '<img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/food.jpg" alt="Card image cap">'+
                   //   // '<a>'+
@@ -723,9 +1099,9 @@ function populateMySurveys(userId){
 
                   '<div class="rounded-bottom special-color lighten-3 text-center pt-3">'+
                     '<ul class="list-unstyled list-inline font-small">'+
-                      '<li class="list-inline-item pr-2 white-text" data-toggle="tooltip" data-placement="top" title="Survey Date"><i class="far fa-clock pr-1"></i>'+surveydate+'</li>'+
-                      '<li class="list-inline-item pr-2" data-toggle="tooltip" data-placement="top" title="Number of Responses"><a class="white-text"><i class="far fa-comments pr-1"></i>'+survey.voteCount+'</a></li>'+
-                      '<li class="list-inline-item pr-2" data-toggle="tooltip" data-placement="top" title="Remaining Survey Budget"><a class="white-text"><i class="fas fa-wallet pr-1"> </i>'+survey.budget+'</a></li>'+
+                      '<li class="list-inline-item pr-2 white-text" data-toggle="tooltip" data-placement="top" title="Bet Resolve Date"><i class="far fa-clock pr-1"></i>'+betresolvedate+'</li>'+
+                      '<li class="list-inline-item pr-2" data-toggle="tooltip" data-placement="top" title="Number of Bets"><a class="white-text"><i class="far fa-comments pr-1"></i>'+survey.voteCount+'</a></li>'+
+                      '<li class="list-inline-item pr-2" data-toggle="tooltip" data-placement="top" title="Bet Total"><a class="white-text"><i class="fas fa-wallet pr-1"> </i>'+survey.price * survey.voteCount+'</a></li>'+
                       // '<li class="list-inline-item"><a href="#" class="white-text"><i class="fab fa-twitter pr-1"> </i>5</a></li>'+
                     '</ul>'+
                   '</div>'+
@@ -770,11 +1146,12 @@ function createPoll(pollObject){
     var chargeamount = 100 + parseInt(pollObject.funding);
     $("#feesatoshi").text(chargeamount);
 
+    pollObject.chargeamount = chargeamount;
     pollObject.userId = glusername;
-    pollObject.customdesc = "Create Survey on Satback.tk";
+    pollObject.customdesc = "Create Bet on Betya.tk";
 
     var str = JSON.stringify(pollObject);
-    console.log("query: ", lnendpoint + "/createpoll" + str);
+    console.log("query: ", lnendpoint + "/createbet" + str);
     $('#pickCardModal').modal("show");
     
     //DEBUG
@@ -783,7 +1160,7 @@ function createPoll(pollObject){
     
     //AJAX to server and get invoice
     $.ajax({
-      url : lnendpoint + "/createpoll",
+      url : lnendpoint + "/createbet",
       type : 'POST',
       // data : {
       //     'numberOfWords' : 10
@@ -809,10 +1186,18 @@ function createPoll(pollObject){
     });
 }
 
-function votePoll(pollId, voteoption,allvoteoptions, voterpayreq){
-    voting = true;
-    refilling = false;
-    var str = "pollId=" + pollId + "&voteoption=" + voteoption + "&voterpayreq=" + voterpayreq + "&allvoteoptions=" + allvoteoptions;
+function resolveBet(pollId, betresponse,payreq, resolvecode, resolvevote){
+    // voting = true;
+    // refilling = false;
+
+    //  var pollId = req.query.pollId;
+    // var betresponse = req.query.betresponse;
+    // var payreq = req.query.payreq;
+    // var resolvecode = req.query.resolvecode;
+    // var resolvevote = req.query.resolvevote;
+
+
+    var str = "pollId=" + pollId + "&betresponse=" + betresponse + "&payreq=" + payreq + "&resolvecode=" + resolvecode + "&resolvevote=" + resolvevote;
 //    "poll=" + 
 //    var str = JSON.stringify(pollObject);
     // $("#paymentstatus").text("Creating Invoice...");
@@ -820,9 +1205,16 @@ function votePoll(pollId, voteoption,allvoteoptions, voterpayreq){
    // $('#pickCardModal').modal("show");
 //    return false;
     
+    // $("#feesatoshi").text($("#betprice").val().split(" Satoshis")[0]);
+//    "poll=" + 
+//    pollObject.userId = firebase.auth().currentUser.uid;
+//    var str = JSON.stringify(pollObject);
+    console.log("query: ", lnendpoint + "/resolveBet" + str);
+    // $('#pickCardModal').modal("show");
+
     //AJAX to server and get invoice
     $.ajax({
-      url : lnendpoint + "/votepoll",
+      url : lnendpoint + "/resolvebet",
       type : 'GET',
       // data : {
       //     'numberOfWords' : 10
@@ -841,20 +1233,87 @@ function votePoll(pollId, voteoption,allvoteoptions, voterpayreq){
               $("#votesavespin").hide();
               
           } else {
-              if(voterpayreq != ""){
+              console.log("resolving bet");
+//               if(voterpayreq != ""){
                   
-                  setupAfterVoting();
-                  $("#voterpayreqtext").val("");
-//                  , duration:0, showAction: true, actionText:"Go to Results", onActionClick: function(element){window.location.href=window.location.href+"&result=true";}
-                  Snackbar.show({text: 'Payment sent!' ,pos: "bottom-center"});
-              } else {
-                  Snackbar.show({text: 'Thanks for completing the survey.' ,pos: "bottom-center"});
+//                   setupAfterVoting();
+//                   $("#voterpayreqtext").val("");
+// //                  , duration:0, showAction: true, actionText:"Go to Results", onActionClick: function(element){window.location.href=window.location.href+"&result=true";}
+//                   Snackbar.show({text: 'Payment sent!' ,pos: "bottom-center"});
+//               } else {
+                  Snackbar.show({text: 'Thanks for resolving the bet.' ,pos: "bottom-center"});
                   // var orderId = data.split(",")[1];
                   // var pwstr = data.split(",")[2];
                   // var obfOrderId = orderId.replace(/[^0-9a-z]/gi, '');
                   // //start checking for invoice payment
                   // checkInvoice(obfOrderId, orderId, pwstr);  
-              }
+              // }
+                           
+          }
+          
+
+      },
+      error : function(request,error)
+      {
+          console.log("error Server Request: "+JSON.stringify(request) + "error: " + error);
+      }
+    });
+}
+
+function votePoll(pollId, voteoption,allvoteoptions, voterpayreq, contactinfo){
+    voting = true;
+    refilling = false;
+    var str = "pollId=" + pollId + "&voteoption=" + voteoption + "&voterpayreq=" + voterpayreq + "&allvoteoptions=" + allvoteoptions + "&contactinfo=" + contactinfo;
+//    "poll=" + 
+//    var str = JSON.stringify(pollObject);
+    // $("#paymentstatus").text("Creating Invoice...");
+//    console.log("query: ", lnendpoint + "/votepoll?" + str);
+   // $('#pickCardModal').modal("show");
+//    return false;
+    
+    $("#feesatoshi").text($("#betprice").val().split(" Satoshis")[0]);
+//    "poll=" + 
+//    pollObject.userId = firebase.auth().currentUser.uid;
+//    var str = JSON.stringify(pollObject);
+    console.log("query: ", lnendpoint + "/joinbet" + str);
+    $('#pickCardModal').modal("show");
+
+    //AJAX to server and get invoice
+    $.ajax({
+      url : lnendpoint + "/joinbet",
+      type : 'GET',
+      // data : {
+      //     'numberOfWords' : 10
+      // },
+      data: str,
+    //              contentType: contenttype,
+      // dataType: dataJson,
+      success : function(data) {
+    //                   console.log("listenmsg Server returned: "  + data);
+
+          if(data.includes("fail")){
+              console.log("votePoll req failed: ", data);
+              $('#pickCardModal').modal("hide");
+              Snackbar.show({text: 'Error: '+data ,pos: "bottom-center"});
+              $("#votesavecheck").show();
+              $("#votesavespin").hide();
+              
+          } else {
+              console.log("joining bet");
+//               if(voterpayreq != ""){
+                  
+//                   setupAfterVoting();
+//                   $("#voterpayreqtext").val("");
+// //                  , duration:0, showAction: true, actionText:"Go to Results", onActionClick: function(element){window.location.href=window.location.href+"&result=true";}
+//                   Snackbar.show({text: 'Payment sent!' ,pos: "bottom-center"});
+//               } else {
+                  // Snackbar.show({text: 'Thanks for joining the bet.' ,pos: "bottom-center"});
+                  var orderId = data.split(",")[1];
+                  var pwstr = data.split(",")[2];
+                  var obfOrderId = orderId.replace(/[^0-9a-z]/gi, '');
+                  //start checking for invoice payment
+                  checkInvoice(obfOrderId, orderId, pwstr);  
+              // }
                            
           }
           
@@ -1048,14 +1507,18 @@ function setupAfterVoting(){
         
         //totals and counts show them only here.
         $(".optioncountcl").show();
-        $("#totalvoteholder").show();
+        // $("#totalvoteholder").show();
         
+        $("#votebutton").attr("disabled", "disabled");
+        $("#contactinfo").attr("disabled", "disabled");
+
+        $("#bettotal").val(parseInt($("#bettotal").val().split(" Satoshis")[0]) + parseInt($("#betprice").val().split(" Satoshis")[0]) + " Satoshis");
         // sharelink
-       $("#sharecontainer").show();
-       $("#polllinktext").val(window.location.href);
+       // $("#sharecontainer").show();
+       // $("#polllinktext").val(window.location.href);
 
        setTimeout(function(){
-        Snackbar.show({text: 'Thanks for responding to the survey 👋' ,pos: "bottom-center", duration:0, showAction: true, actionText:"Go to Home", onActionClick: function(element){window.location.href="./"}});
+        Snackbar.show({text: 'Thanks for joining the bet. You will be contacted on Bet Resolve Date 👋' ,pos: "bottom-center", duration:0, showAction: true, actionText:"Bet Page", onActionClick: function(element){window.location.href=window.location.href + "&result=true"}});
        }, 2000);
 }
 let webln;

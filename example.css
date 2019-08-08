@@ -62,7 +62,7 @@
 .circle-loader {
   margin: 0 0 30px 10px;
   border: 2px solid rgba(0, 0, 0, 0.2);
-  border-left-color: #ff3547;
+  border-left-color: #03A9F4;
   animation-name: loader-spin;
   animation-duration: 1s;
   animation-iteration-count: infinite;
@@ -180,3 +180,12 @@ word-wrap: break-word;
 .flexit{
     flex: 1 1 auto;
 }
+
+.nohover {
+  pointer-events: none;
+}
+
+.betyacolor {
+  background-color: #03A9F4;
+}
+
